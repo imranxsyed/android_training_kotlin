@@ -10,73 +10,49 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 
 class MainActivity : AppCompatActivity() {
-    
+
     companion object{
-        private const val TAG = "MainActivity"
+        const val EXT_EMAIL = "EXT_EMAIL"
+        const val TERMS_AND_AGREEMENT_REQUEST = 1234
     }
-    private lateinit var submitButton  : Button
-    private lateinit var name : EditText
+
+    private lateinit var etEmail : EditText
+    private lateinit var btnSumbit : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate: ")
         setContentView(R.layout.activity_main)
 
-        submitButton = findViewById(R.id.btn_submit)
-        name = findViewById(R.id.et_name)
+        etEmail = findViewById(R.id.ed_email)
+        btnSumbit = findViewById(R.id.btn_submit)
 
-
-//        submitButton.setOnClickListener{
-//
-//        }
-
-        submitButton.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v: View?) {
-                Toast.makeText(this@MainActivity, "Working", Toast.LENGTH_SHORT).show()
-                val value = name.text.toString()
-                if (value == ""){
-                    Toast.makeText(this@MainActivity, "Please provide your name", Toast.LENGTH_SHORT).show()
-
-                }
-                else{
-                    Toast.makeText(this@MainActivity, "Welcome", Toast.LENGTH_SHORT).show()
-                }
+        btnSumbit.setOnClickListener{
+          val email =  etEmail.text.toString()
+            if (email != ""){
+                val intent = Intent()
+                //destination
+                intent.setClass(this, TermsAndAgreement::class.java)
+                //data
+                intent.putExtra(EXT_EMAIL,email)
+                startActivityForResult(intent, TERMS_AND_AGREEMENT_REQUEST)
             }
-
-        })
+            else{
+                Toast.makeText(this, "Please provide your email address", Toast.LENGTH_LONG).show()
+            }
+        }
 
     }
 
-    override fun onStart() {
-        Log.d(TAG, "onStart: ")
-        super.onStart()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode ==  TERMS_AND_AGREEMENT_REQUEST && resultCode == Activity.RESULT_OK){
+            Toast.makeText(this, "Your Are signed up", Toast.LENGTH_SHORT).show()
+            etEmail.visibility = View.GONE
+            btnSumbit.visibility = View.GONE
+
+        }
     }
-
-    override fun onResume() {
-        Log.d(TAG, "onResume: ")
-        super.onResume()
-    }
-
-    override fun onPause() {
-        Log.d(TAG, "onPause: ")
-        super.onPause()
-    }
-
-    override fun onStop() {
-        Log.d(TAG, "onStop: ")
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        Log.d(TAG, "onDestroy: ")
-        super.onDestroy()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-    }
-
-
 }
